@@ -50,19 +50,29 @@ if ($payment_type == "wallet") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="10;url=ticket.php?payment_id=<?php echo $payment_id; ?>">
+    <?php include("include/css.php"); ?>
+    <meta http-equiv="refresh" content="15;url=ticket.php?payment_id=<?php echo $payment_id; ?>">
     <title>Processing Payment</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
         .container { max-width: 400px; margin: auto; padding: 20px; border-radius: 10px; background: #f8f9fa; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); }
         h3 { color: green; }
     </style>
 </head>
 <body>
+<div class="osahan-listing">
+    <div class="osahan-header-nav shadow-sm p-3 d-flex align-items-center bg-danger">
+        <h5 class="font-weight-normal mb-0 text-white">
+            <a class="text-danger" href="home.php"><i class="icofont-rounded-left"></i></a> Payment
+        </h5>
+        <div class="ml-auto d-flex align-items-center">
+            <a href="home.php" class="text-white h6 mb-0"><i class="icofont-search-1"></i></a>
+        </div>
+    </div>
     <div class="container">
         <h3>Processing your UPI payment...</h3>
         <p>Please accept the transaction in your UPI app.</p>
         <p>You will be redirected to your ticket shortly after completing payment.</p>
     </div>
+</div>
 </body>
 </html>
