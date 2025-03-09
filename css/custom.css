@@ -408,6 +408,7 @@ h1.success-icon {
 }
 
 .osahan-home-header img {
+    width: 31px;
     height: 31px;
     border: 2px solid #fff;
     border-radius: 100px;

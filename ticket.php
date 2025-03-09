@@ -7,6 +7,7 @@ if (!isset($_GET['payment_id'])) {
 }
 
 $payment_id = $_GET['payment_id'];
+$is_old = isset($_GET['is_old']) ? $_GET['is_old'] : false;
 
 // Fetch payment details
 $stmt = $db->prepare("SELECT * FROM payment WHERE wlt_id = ?");
@@ -72,28 +73,37 @@ $conductor_phone = $bus ? $bus['ocntno'] : "N/A";
 <div class="osahan-listing">
     <div class="osahan-header-nav shadow-sm p-3 d-flex align-items-center bg-danger">
         <h5 class="font-weight-normal mb-0 text-white">
-            <a class="text-danger" href="home.php"><i class="icofont-rounded-left"></i></a> Ticket Details
+            <a class="text-danger" href="<?php echo $is_old ? 'ticket_list.php' : 'home.php'; ?>">
+                <i class="icofont-rounded-left"></i>
+            </a> Ticket Details
         </h5>
         <div class="ml-auto d-flex align-items-center">
             <a href="home.php" class="text-white h6 mb-0"><i class="icofont-search-1"></i></a>
         </div>
     </div>
 
-    <!-- Success Message -->
     <div class="container">
-        <div class="success-message">
-            🎉 Payment Successful! Your ticket has been confirmed.
-        </div>
+        <?php if (!$is_old) { ?>
+            <!-- Success Message -->
+            <div class="success-message">
+                🎉 Payment Successful! Your ticket has been confirmed.
+            </div>
+            <h3>Ticket Confirmation</h3>
+        <?php } ?>
+        <?php if ($is_old) { ?>
+            <h3>Ticket Details</h3>
+        <?php } ?>
 
-        <h3>Ticket Confirmation</h3>
         <p><strong>Ticket ID:</strong> <?php echo $ticket_id; ?></p>
         <p><strong>Bus:</strong> <?php echo $payment['bname']; ?></p>
         <p><strong>Route:</strong> <?php echo $payment['frm']; ?> → <?php echo $payment['retrun']; ?></p>
         <p><strong>Amount Paid:</strong> ₹<?php echo $payment['amt']; ?></p>
         <p><strong>Conductor Contact:</strong> <?php echo $conductor_phone; ?></p>
 
-        <!-- Go to Home Button -->
-        <a href="home.php" class="home-btn">Go to Home</a>
+        <?php if (!$is_old) { ?>
+            <!-- Go to Home Button -->
+            <a href="home.php" class="home-btn">Go to Home</a>
+        <?php } ?>
     </div>
 </div>
 </body>

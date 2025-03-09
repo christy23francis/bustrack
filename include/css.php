@@ -3,7 +3,7 @@
 <meta name="description" content>
 <meta name="author" content>
 <!-- <link rel="icon" type="image/png" href="img/logo.png"> -->
-<title>Bus</title>
+<title>RoutePal</title>
 
 <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="vendor/icons/icofont.min.css" rel="stylesheet" type="text/css">

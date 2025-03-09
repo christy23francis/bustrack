@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="bg-danger px-3 pb-3">
+    <div class="bg-danger px-3 py-4">
         <div class="bg-white rounded-1 p-3">
             <form action="listing.php" method="get">
                 <div class="form-group border-bottom pb-2">
@@ -54,7 +54,7 @@
                 <button type="submit" class="btn btn-danger btn-block osahanbus-btn rounded-1">Search</button>
             </form>
 
-            <hr>
+            <!-- <hr> -->
             <!-- <form action="listing_b.php" method="get">
                 <div class="form-group border-bottom pb-2">
                     <label for="exampleFormControlSelect1" class="mb-2"><span class="icofont-search-map text-danger"></span> Bus</label><br>
@@ -73,8 +73,8 @@
                 </div>
                 <button type="submit" class="btn btn-danger btn-block osahanbus-btn rounded-1">Search</button>
             </form> -->
-             <hr>
-            <form action="listing_b_id.php" method="get">
+             <!-- <hr> -->
+            <!-- <form action="listing_b_id.php" method="get">
                 <div class="form-group border-bottom pb-2">
                     <label for="exampleFormControlSelect1" class="mb-2"><span class="icofont-search-map text-danger"></span> BUS ID</label><br>                   <select class="js-example-basic-single form-control" name="OLog_Id" required>
                         <option value="">Select</option>
@@ -89,7 +89,7 @@
                     </select>               
                 </div>
                 <button type="submit" class="btn btn-danger btn-block osahanbus-btn rounded-1">Search</button>
-            </form>
+            </form> -->
         </div>
     </div>
 
@@ -130,27 +130,27 @@
 
 <div class="fixed-bottom p-3">
     <div class="footer-menu row m-0 bg-danger shadow rounded-2">
-        <div class="col-3 p-0 text-center">
+        <div class="col-4 p-0 text-center">
             <a href="home.php" class="home text-white active">
             <span class="icofont-ui-home h5"></span>
             <p class="mb-0 small">Home</p>
             </a>
         </div>
 
-        <div class="col-3 p-0 text-center">
+        <!-- <div class="col-3 p-0 text-center">
             <a href="payment_fisrt.php" class="home text-white">
             <span class="icofont-ticket h5"></span>
             <p class="mb-0 small">Payment</p>
             </a>
-        </div>
-        <div class="col-3 p-0 text-center">
+        </div> -->
+        <div class="col-4 p-0 text-center">
             <a href="wallet.php" class="home text-white">
             <span class="icofont-wallet h5"></span>
             <!-- <small class="osahan-n">4</small> -->
             <p class="mb-0 small">Wallet</p>
             </a>
         </div>
-        <div class="col-3 p-0 text-center">
+        <div class="col-4 p-0 text-center">
             <a href="profile.php" class="home text-white">
             <span class="icofont-user h5"></span>
             <p class="mb-0 small">Account</p>
