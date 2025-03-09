@@ -1,183 +1,147 @@
 <?php
-	include("auth.php");
-	include('db_connect/db.php');
-	$Log_Id=$_SESSION['SESS_PASSENGER_ID'];
-	$result = $db->prepare("select * from passenger where Log_Id='$Log_Id'");
-	$result->execute();
-	for($i=0; $rows = $result->fetch(); $i++)
-	{
-		$name=$rows["name"];
-		$cntno=$rows["cntno"];
-	}	
+include("auth.php");
+include('db_connect/db.php');
+$Log_Id = $_SESSION['SESS_PASSENGER_ID'];
+
+// Get Passenger Details
+$result = $db->prepare("SELECT * FROM passenger WHERE Log_Id = ?");
+$result->execute([$Log_Id]);
+$user = $result->fetch();
+$name = $user["name"];
+$cntno = $user["cntno"];
+$email = $user["email"];
+
+// Get Bus Details
+$bname = $_GET['bname'];
+$vno = $_GET['vno'];
+$from = $_GET['from'];
+$to = $_GET['to'];
+$start_time = $_GET['start_time'];
+$end_time = $_GET['end_time'];
+$amount = $_GET['amount'];
+
+$walletQuery = $db->prepare("SELECT amt FROM wallet WHERE email = :email");
+$walletQuery->execute(['email' => $user["email"]]); // Replace with actual email field
+$wallet = $walletQuery->fetch();
+$wallet_balance = $wallet ? $wallet['amt'] : 0;
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<?php
-        include("include/css.php")
-    ?>
+    <?php include("include/css.php"); ?>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 30px auto;
+        }
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .btn-danger {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        #wallet-info {
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+            color: green;
+        }
+    </style>
 </head>
-<body class="bg-light">
-
+<body>
 <div class="osahan-listing">
     <div class="osahan-header-nav shadow-sm p-3 d-flex align-items-center bg-danger">
         <h5 class="font-weight-normal mb-0 text-white">
-            <a class="text-danger" href="home.php"><i class="icofont-rounded-left"></i></a>
+            <a class="text-danger" href="home.php"><i class="icofont-rounded-left"></i></a> Payment
         </h5>
         <div class="ml-auto d-flex align-items-center">
             <a href="home.php" class="text-white h6 mb-0"><i class="icofont-search-1"></i></a>
-            <a href="#" class="mx-4 text-white h6 mb-0"></a>
-            <a class="toggle osahan-toggle h4 m-0 text-white ml-auto" href="#"><i class="icofont-navigation-menu"></i></a>
         </div>
     </div>
+<div class="container mt-4">
+    <h4>Confirm Your Payment</h4>
+    <form action="action/process_payment.php" method="post">
+        <input type="hidden" name="Log_Id" value="<?php echo $Log_Id; ?>">
+        <input type="hidden" name="cname" value="<?php echo $name; ?>">
+        <input type="hidden" name="ccntno" value="<?php echo $cntno; ?>">
+        <input type="hidden" name="bname" value="<?php echo $bname; ?>">
+        <input type="hidden" name="vno" value="<?php echo $vno; ?>">
+        <input type="hidden" name="from" value="<?php echo $from; ?>">
+        <input type="hidden" name="to" value="<?php echo $to; ?>">
+        <input type="hidden" name="start_time" value="<?php echo $start_time; ?>">
+        <input type="hidden" name="end_time" value="<?php echo $end_time; ?>">
+        <input type="hidden" name="amount" value="<?php echo $amount; ?>">
 
-    <br>
+        <p><strong>Bus:</strong> <?php echo $bname . " (" . $vno . ")"; ?></p>
+        <p><strong>Route:</strong> <?php echo $from . " → " . $to; ?></p>
+        <p><strong>Start Time:</strong> <?php echo $start_time; ?></p>
+        <p><strong>End Time:</strong> <?php echo $end_time; ?></p>
+        <p><strong>Amount:</strong> ₹<?php echo $amount; ?></p>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-            <hr>
-                <form action="action/payment.php" method="post" enctype="multipart/form-data" autocomplete="off">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group" style="padding: 10px;">
-                                <label class="control-label mb-10">Bus</label>
-                                <input type="hidden" name="cname" value="<?php echo $name;?>">
-                                <input type="hidden" name="ccntno" value="<?php echo $cntno;?>">
-                                <input type="hidden" name="Log_Id" value="<?php echo $Log_Id;?>">
-                                 <input list="BLog_Id" required class="form-control" name="BLog_Id" placeholder="Search">
-                                <datalist id="BLog_Id">
-                                    <option value="">Select</option> 
-                                     <?php
-                                        $result = $db->prepare("select distinct(bname) from  vehicle");
-                                        $result->execute();
-                                        for($i=0; $rows = $result->fetch(); $i++)
-                                        {
-                                        echo '<option>'.$rows['bname'].'</option>';
-                                        }
-                                    ?>	                                         					
-                                </datalist>
-                                 <label class="control-label mb-10">From</label>
-                                 <input list="frm" required class="form-control" name="frm" placeholder="Start" id="from-dropdown">
-                                <datalist id="frm">
-                                    <option value="">Select</option> 
-                                     <?php
-                                        $result = $db->prepare("select distinct(stop) from  stops");
-                                        $result->execute();
-                                        for($i=0; $rows = $result->fetch(); $i++)
-                                        {
-                                        echo '<option>'.$rows['stop'].'</option>';
-                                        }
-                                    ?>	                                         					
-                                </datalist>
-                                 <label class="control-label mb-10">To</label>
-                                 <input list="retrun" required class="form-control" name="retrun" placeholder="Stop" id="to-dropdown">
-                                <datalist id="retrun">
-                                    <option value="">Select</option> 
-                                     <?php
-                                        $result = $db->prepare("select distinct(stop) from  stops");
-                                        $result->execute();
-                                        for($i=0; $rows = $result->fetch(); $i++)
-                                        {
-                                        echo '<option>'.$rows['stop'].'</option>';
-                                        }
-                                    ?>	                                         					
-                                </datalist>
-                                <label class="control-label mb-10">Amount</label>
-                                <input type="number" class="form-control" id="amt" readonly name="amt" required min="0" step="0.01">
-                                <br>
-                                <input type="submit" value="Pay" class="btn btn-danger  btn-block">
-                            </div>                            
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+        <label><input type="radio" name="payment_type" value="wallet" onclick="togglePayment('wallet')"> Wallet</label>
+        <span id="wallet-info" style="display:none; color:green;">Balance: ₹<?php echo $wallet_balance; ?></span>
+        <br>
+        <label><input type="radio" name="payment_type" value="upi" onclick="togglePayment('upi')"> UPI</label>
+        <input type="text" id="upi-input" name="upi_id" class="form-control mt-2" placeholder="Enter UPI ID" style="display:none;">
 
-
+        <button type="submit" id="pay-button" class="btn btn-danger mt-3" disabled>Pay Now</button>
+    </form>
+</div>
 </div>
 
-<?php
-        include("include/sidebar.php")
-    ?>
-<?php
-        include("include/js.php")
-    ?>
-    <script>
-            // When either "From" or "To" dropdown value changes
-        $('#from-dropdown, #to-dropdown').change(function() {
-            var selectedFromStop = $('#from-dropdown').val();  // Get the selected "From" stop
-            var selectedToStop = $('#to-dropdown').val();  // Get the selected "To" stop
-            if (selectedFromStop && selectedToStop) {
-                $.ajax({
-                    url: 'action/calculate_fare.php', // Create this PHP file
-                    type: 'POST',
-                    data: {
-                        fromStop: selectedFromStop,
-                        toStop: selectedToStop
-                    },
-                    success: function(response) {
-                        $('#amt').val(response);
-                    }
-                });
-            }
-        });
-    </script>
-    <script>
-  $(document).ready(function() {
-    $('#myLink').click(function(event) {
-      event.preventDefault();  // Prevents the link from being followed
-      alert('Link clicked, but no navigation happens!');
-    });
-  });
-</script>
 <script>
-$(document).ready(function () {
-    // Initially disable the "From" and "To" dropdowns
-    $('#from-dropdown, #to-dropdown').prop('disabled', true);
+    var wallet_balance = <?php echo $wallet_balance; ?>;
+    var amount = <?php echo $amount; ?>;
 
-    // When a bus is selected, fetch stops dynamically
-    $("input[name='BLog_Id']").on('input', function () {
-        var busName = $(this).val();
-
-        if (busName) {
-            // Enable the "From" and "To" dropdowns
-            $('#from-dropdown, #to-dropdown').prop('disabled', false);
-
-            // Make AJAX request to fetch stops for the selected bus
-            $.ajax({
-                url: 'action/fetch_stops.php',
-                type: 'POST',
-                data: { busName: busName },
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success) {
-                        var stops = response.stops;
-
-                        // Clear existing options and add new ones
-                        $('#frm, #retrun').empty().append('<option value="">Select</option>');
-
-                        stops.forEach(function (stop) {
-                            $('#frm, #retrun').append('<option value="' + stop + '">' + stop + '</option>');
-                        });
-                    } else {
-                        alert('No stops found for this bus.');
-                        $('#from-dropdown, #to-dropdown').prop('disabled', true);
-                    }
-                },
-                error: function () {
-                    alert('Error fetching stops. Please try again.');
-                }
-            });
+    function togglePayment(type) {
+        if (type === 'wallet') {
+            if (wallet_balance >= amount) {
+                document.getElementById('wallet-info').style.display = 'inline';
+                document.getElementById('upi-input').style.display = 'none';
+                document.getElementById('pay-button').disabled = false;
+            } else {
+                alert("Insufficient wallet balance! Please use UPI.");
+                document.getElementById('pay-button').disabled = true;
+            }
         } else {
-            // If no bus is selected, disable "From" and "To" dropdowns
-            $('#from-dropdown, #to-dropdown').prop('disabled', true);
+            document.getElementById('wallet-info').style.display = 'none';
+            document.getElementById('upi-input').style.display = 'block';
+            document.getElementById('pay-button').disabled = true;
         }
+    }
+
+    document.getElementById('upi-input').addEventListener('input', function () {
+        document.getElementById('pay-button').disabled = this.value.trim() === '';
     });
-});
-
 </script>
-
 </body>
 </html>
