@@ -73,8 +73,8 @@
                 </div>
                 <button type="submit" class="btn btn-danger btn-block osahanbus-btn rounded-1">Search</button>
             </form> -->
-             <!-- <hr> -->
-            <!-- <form action="listing_b_id.php" method="get">
+             <hr>
+            <form action="listing_b_id.php" method="get">
                 <div class="form-group border-bottom pb-2">
                     <label for="exampleFormControlSelect1" class="mb-2"><span class="icofont-search-map text-danger"></span> BUS ID</label><br>                   <select class="js-example-basic-single form-control" name="OLog_Id" required>
                         <option value="">Select</option>
@@ -89,7 +89,7 @@
                     </select>               
                 </div>
                 <button type="submit" class="btn btn-danger btn-block osahanbus-btn rounded-1">Search</button>
-            </form> -->
+            </form>
         </div>
     </div>
 
