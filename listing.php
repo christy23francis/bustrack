@@ -89,10 +89,19 @@ $buses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($buses as $bus): ?>
                     <?php
                     // Get start and end time for the bus route
-                    $stmt = $db->prepare("SELECT MIN(time) AS start_time, MAX(time) AS end_time FROM stops WHERE bname = :bname");
+                    // Get start time (departure time from 'from' stop)
+                    $stmt = $db->prepare("SELECT time FROM stops WHERE stop = :from AND bname = :bname");
+                    $stmt->bindParam(':from', $from);
                     $stmt->bindParam(':bname', $bus['bname']);
                     $stmt->execute();
-                    $times = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $fromTime = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    // Get end time (arrival time at 'to' stop)
+                    $stmt = $db->prepare("SELECT time FROM stops WHERE stop = :to AND bname = :bname");
+                    $stmt->bindParam(':to', $to);
+                    $stmt->bindParam(':bname', $bus['bname']);
+                    $stmt->execute();
+                    $toTime = $stmt->fetch(PDO::FETCH_ASSOC);
 
                     // Get distances for fare calculation
                     $stmt = $db->prepare("SELECT distance FROM stops WHERE stop = :from AND bname = :bname");
@@ -121,11 +130,11 @@ $buses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($bus['bname']); ?> (<?php echo htmlspecialchars($bus['vno']); ?>)</h5>
                                 <p class="card-text">Type: <?php echo htmlspecialchars($bus['vtype']); ?></p>
-                                <p class="card-text">Start Time: <?php echo htmlspecialchars($times['start_time']); ?></p>
-                                <p class="card-text">End Time: <?php echo htmlspecialchars($times['end_time']); ?></p>
+                                <p class="card-text">Start Time: <?php echo isset($fromTime['time']) ? $fromTime['time'] : 'N/A'; ?></p>
+                                <p class="card-text">End Time: <?php echo isset($toTime['time']) ? $toTime['time'] : 'N/A'; ?></p>
                                 <span class="fare-badge">Fare: ₹<?php echo $fare; ?></span>
                                 <br><br>
-                                <a href="payment.php?bname=<?php echo urlencode($bus['bname']); ?>&vno=<?php echo urlencode($bus['vno']); ?>&from=<?php echo urlencode($from); ?>&to=<?php echo urlencode($to); ?>&start_time=<?php echo urlencode($times['start_time']); ?>&end_time=<?php echo urlencode($times['end_time']); ?>&amount=<?php echo urlencode($fare); ?>&ocntno=<?php echo urlencode($bus['ocntno']); ?>"
+ <a href="payment.php?bname=<?php echo urlencode($bus['bname']); ?> &vno=<?php echo urlencode($bus['vno']); ?>&from=<?php echo urlencode($from); ?>&to=<?php echo urlencode($to); ?>&start_time=<?php echo isset($fromTime['time']) ? urlencode($fromTime['time']) : ''; ?>&end_time=<?php echo isset($toTime['time']) ? urlencode($toTime['time']) : ''; ?>&amount=<?php echo urlencode($fare); ?>&ocntno=<?php echo urlencode($bus['ocntno']); ?>"
                                 class="btn book-btn btn-block">Book Now</a>
                             </div>
                         </div>
