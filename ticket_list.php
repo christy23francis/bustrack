@@ -3,11 +3,13 @@ session_start();
 include('db_connect/db.php');
 
 // Fetch all tickets
+$Log_Id = $_SESSION['SESS_PASSENGER_ID'];
+
 $stmt = $db->prepare("SELECT wlt_id, cname, bname, frm, retrun, amt, status, date 
                       FROM payment 
-                      WHERE status = 'Paid' 
-                      ORDER BY date DESC");
-$stmt->execute();
+                      WHERE status = 'Paid' AND Log_Id = ? 
+                      ORDER BY wlt_id DESC");
+$stmt->execute([$Log_Id]);
 $tickets = $stmt->fetchAll();
 ?>
 
